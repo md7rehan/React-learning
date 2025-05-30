@@ -1,0 +1,142 @@
+What Are Props in React?
+
+Props (short for properties) are read-only inputs passed from parent components to child components in React.
+They allow data to flow in a one-way direction: from parent → child.
+Think of props like function parameters but for components.
+
+Why Use Props?
+To reuse components with different data.
+To communicate between components.
+To make components dynamic and flexible.
+
+Basic Syntax & Usage
+
+1. Parent Component:
+   <Welcome name="John" />
+
+2. Child Component (Functional):
+
+function Welcome(props) {
+return <h1>Hello, {props.name}!</h1>;
+}
+
+Props Example – Functional Component
+
+function UserCard(props) {
+return (
+
+<div>
+<h3>{props.username}</h3>
+<p>Age: {props.age}</p>
+</div>
+);
+}
+
+function App() {
+return (
+
+<div>
+<UserCard username="Alice" age={25} />
+<UserCard username="Bob" age={30} />
+</div>
+);
+}
+
+Destructuring Props (Cleaner Syntax)
+
+function UserCard({ username, age }) {
+return (
+
+<div>
+<h2>{username}</h2>
+<p>{age} years old</p>
+</div>
+);
+}
+
+Props Are Read-Only
+
+You cannot modify props inside a component.
+They're immutable.
+props.name = "Changed"; // ❌ Will throw an error
+
+Instead, if you need to change values, use state.
+
+Passing Different Types of Props
+
+| Type     | Example                         |
+| -------- | ------------------------------- |
+| String   | `<Comp title="Hello" />`        |
+| Number   | `<Comp age={25} />`             |
+| Boolean  | `<Comp isLoggedIn={true} />`    |
+| Array    | `<Comp items={[1,2,3]} />`      |
+| Object   | `<Comp user={{name: "A"}} />`   |
+| Function | `<Comp onClick={handleClick}/>` |
+
+Example (Object & Function Props):
+function Greet({ user, onGreet }) {
+return (
+
+<div>
+<h3>Hello, {user.name}</h3>
+<button onClick={onGreet}>Greet</button>
+</div>
+);
+}
+
+Reusability with Props
+function Button({ label, bgColor }) {
+return (
+<button style={{ backgroundColor: bgColor }}>{label}</button>
+);
+}
+
+<Button label="Submit" bgColor="green" />
+<Button label="Cancel" bgColor="red" />
+
+PropTypes for Type Checking
+In industry, we use prop-types package to validate props.
+npm install prop-types
+
+import PropTypes from 'prop-types';
+
+function Profile({ name, age }) {
+return <p>{name} is {age} years old</p>;
+}
+
+Profile.propTypes = {
+name: PropTypes.string.isRequired,
+age: PropTypes.number,
+};
+
+Parent to Child Communication (via Props)
+Parent:
+<Child message="Hello from Parent" />
+Child:
+function Child({ message }) {
+return <p>{message}</p>;
+}
+
+Real-World Use Case: Cards
+
+function ProductCard({ product }) {
+return (
+
+<div>
+<h4>{product.title}</h4>
+<p>₹{product.price}</p>
+</div>
+);
+}
+
+const product = { title: "Book", price: 300 };
+<ProductCard product={product} />
+
+| Concept       | Explanation                                   |
+| ------------- | --------------------------------------------- |
+| Props         | Data passed from parent to child              |
+| Read-only     | Can't be modified inside component            |
+| Destructuring | Makes props easier to access                  |
+| Reusability   | Makes components flexible with different data |
+| Type Checking | Use `prop-types` for validation               |
+| Default Props | Fallback values for missing props             |

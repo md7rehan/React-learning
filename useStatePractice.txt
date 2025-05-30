@@ -1,0 +1,306 @@
+
+
+##  **Assignment 1: Counter App**
+
+### 📋 Task:
+
+Create a button that increases a count when clicked.
+
+###  Expected Output:
+
+
+Count: 0
+[ + Increase ]
+
+
+###  Solution:
+
+
+import { useState } from "react";
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>+ Increase</button>
+    </div>
+  );
+}
+
+
+--------------------------------------------------------
+
+##  **Assignment 2: Toggle Text**
+
+### 📋 Task:
+
+Click a button to toggle between showing and hiding a message.
+
+###  Expected Output:
+
+
+[ Show/Hide ]
+Hello, React!
+
+
+###  Solution:
+
+
+function ToggleText() {
+  const [show, setShow] = useState(true);
+
+  return (
+    <div>
+      <button onClick={() => setShow(!show)}>Show/Hide</button>
+      {show && <p>Hello, React!</p>}
+    </div>
+  );
+}
+
+
+---------------------------------------------------------
+
+##  **Assignment 3: Change Background Color**
+
+### 📋 Task:
+
+Click a button to change the background color randomly.
+
+###  Expected Output:
+
+Button click changes color to red, green, blue, etc.
+
+###  Solution:
+
+
+function ColorChanger() {
+  const [color, setColor] = useState("white");
+
+  const colors = ["red", "green", "blue", "yellow", "orange"];
+
+  function changeColor() {
+    const random = Math.floor(Math.random() * colors.length);
+    setColor(colors[random]);
+  }
+
+  return (
+    <div style={{ backgroundColor: color, padding: "20px" }}>
+      <button onClick={changeColor}>Change Background</button>
+    </div>
+  );
+}
+
+
+-----------------------------------------------------------
+
+##  **Assignment 4: Simple Login Form (Controlled Inputs)**
+
+### 📋 Task:
+
+Create two input fields for `username` and `password`, and show their values below.
+
+###  Expected Output:
+
+
+Username: john
+Password: 1234
+
+
+###  Solution:
+
+
+function LoginForm() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  return (
+    <div>
+      <input
+        placeholder="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <input
+        placeholder="Password"
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <p>Username: {username}</p>
+      <p>Password: {password}</p>
+    </div>
+  );
+}
+
+
+-----------------------------------------------------------
+
+##  **Assignment 5: Add Items to List**
+
+### 📋 Task:
+
+Create an input box and a button. Add the typed value to a list on click.
+
+###  Expected Output:
+
+
+[ Milk ] [ Add ]
+📝 Milk
+📝 Bread
+
+
+###  Solution:
+
+
+function TodoList() {
+  const [task, setTask] = useState("");
+  const [list, setList] = useState([]);
+
+  const addTask = () => {
+    if (task.trim()) {
+      setList([...list, task]);
+      setTask("");
+    }
+  };
+
+  return (
+    <div>
+      <input
+        value={task}
+        onChange={(e) => setTask(e.target.value)}
+        placeholder="Add task"
+      />
+      <button onClick={addTask}>Add</button>
+
+      <ul>
+        {list.map((item, index) => (
+          <li key={index}>📝 {item}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+
+-----------------------------------------------------------
+
+##  **Assignment 6: Password Show/Hide Toggle**
+
+### 📋 Task:
+
+Toggle the visibility of password input.
+
+###  Expected Output:
+
+
+[👁 Show] → password is visible
+[🙈 Hide] → password is hidden
+
+
+###  Solution:
+
+
+function PasswordToggle() {
+  const [show, setShow] = useState(false);
+
+  return (
+    <div>
+      <input type={show ? "text" : "password"} placeholder="Enter Password" />
+      <button onClick={() => setShow(!show)}>
+        {show ? "🙈 Hide" : "👁 Show"}
+      </button>
+    </div>
+  );
+}
+
+
+-----------------------------------------------------------
+
+##  **Assignment 7: Increment/Decrement Counter**
+
+### 📋 Task:
+
+Create + and - buttons to increment or decrement the counter.
+
+###  Expected Output:
+
+
+Count: 3
+[ - ] [ + ]
+
+
+###  Solution:
+
+
+function IncDecCounter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <h3>Count: {count}</h3>
+      <button onClick={() => setCount(count - 1)}>-</button>
+      <button onClick={() => setCount(count + 1)}>+</button>
+    </div>
+  );
+}
+
+
+-----------------------------------------------------------
+
+##  **Assignment 8: Character Counter**
+
+### 📋 Task:
+
+Count and display the number of characters typed into an input.
+
+###  Expected Output:
+
+
+[ Hello World ]
+Characters: 11
+
+
+###  Solution:
+
+
+function CharCounter() {
+  const [text, setText] = useState("");
+
+  return (
+    <div>
+      <input
+        placeholder="Type here"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+      <p>Characters: {text.length}</p>
+    </div>
+  );
+}
+
+
+-----------------------------------------------------------
+
+##  **Bonus Assignment: Like Button Toggle**
+
+### 📋 Task:
+
+Toggle between "Liked ❤️" and "Like ♡" when clicked.
+
+###  Solution:
+
+
+function LikeButton() {
+  const [liked, setLiked] = useState(false);
+
+  return (
+    <button onClick={() => setLiked(!liked)}>
+      {liked ? "❤️ Liked" : "♡ Like"}
+    </button>
+  );
+}
+
+
+--------------------------------------------------------

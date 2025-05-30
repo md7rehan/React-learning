@@ -1,0 +1,262 @@
+
+--------------------------------------------------
+
+##  Assignment 1: Reusable Button Component
+
+###  Task:
+
+Create a `CustomButton` component that accepts the following props:
+
+* `label`: Text to show on the button
+* `color`: Button background color
+* `onClick`: Callback function to execute when clicked
+
+###  Expected Output:
+
+Two buttons:
+
+* A green "Submit" button that shows an alert
+* A red "Cancel" button that logs to console
+
+###  Solution:
+
+
+// CustomButton.jsx
+
+function CustomButton({ label, color, onClick }) {
+  return (
+    <button
+      style={{ backgroundColor: color, padding: "10px 20px", color: "white" }}
+      onClick={onClick}
+    >
+      {label}
+    </button>
+  );
+}
+
+// App.jsx
+function App() {
+  return (
+    <div>
+      <CustomButton
+        label="Submit"
+        color="green"
+        onClick={() => alert("Form Submitted")}
+      />
+      <CustomButton
+        label="Cancel"
+        color="red"
+        onClick={() => console.log("Cancelled")}
+      />
+    </div>
+  );
+}
+
+
+-------------------------------------------
+
+##  Assignment 2: Profile Card
+
+### 📋 Task:
+
+Create a `ProfileCard` component that receives:
+
+* `name`, `age`, and `bio` as props
+
+Display them in a styled card.
+
+###  Expected Output:
+
+A card like:
+
+```
+👤 John Doe
+📅 Age: 28
+📝 Full-stack developer from NY.
+```
+
+###  Solution:
+
+function ProfileCard({ name, age, bio }) {
+  return (
+    <div style={{
+      border: "1px solid #ccc",
+      padding: "10px",
+      borderRadius: "8px",
+      width: "250px",
+      margin: "10px"
+    }}>
+      <h3>👤 {name}</h3>
+      <p>📅 Age: {age}</p>
+      <p>📝 {bio}</p>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <ProfileCard 
+      name="John Doe"
+      age={28}
+      bio="Full-stack developer from NY."
+    />
+  );
+}
+```
+
+-------------------------------------------------
+
+##  Assignment 3: Todo Item List with Props
+
+###  Task:
+
+* Create a `TodoItem` component that takes props: `task`, `completed`
+* Display the task with a checkmark if completed ✅ or a cross ❌
+
+###  Expected Output:
+
+```
+✅ Buy Milk
+❌ Clean the house
+```
+
+###  Solution:
+
+
+function TodoItem({ task, completed }) {
+  return (
+    <p>
+      {completed ? "✅" : "❌"} {task}
+    </p>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <TodoItem task="Buy Milk" completed={true} />
+      <TodoItem task="Clean the house" completed={false} />
+    </div>
+  );
+}
+
+
+-------------------------------------------------------------
+
+##  Assignment 4: Dynamic Navbar with Props (Array)
+
+### 📋 Task:
+
+Create a `Navbar` component that receives an array of links like:
+
+```js
+const links = ["Home", "About", "Services", "Contact"];
+```
+
+Render each as a `<li>` element inside a `<ul>`.
+
+###  Expected Output:
+
+
+- Home
+- About
+- Services
+- Contact
+
+
+###  Solution:
+
+```jsx
+function Navbar({ links }) {
+  return (
+    <ul>
+      {links.map((link, index) => (
+        <li key={index}>- {link}</li>
+      ))}
+    </ul>
+  );
+}
+
+function App() {
+  const links = ["Home", "About", "Services", "Contact"];
+  return <Navbar links={links} />;
+}
+
+
+--------------------------------------------------------------------
+
+##  Assignment 5: Product Card (Object Props)
+
+### 📋 Task:
+
+Create a `ProductCard` component that accepts a single `product` prop with:
+
+
+const product = {
+  name: "Wireless Mouse",
+  price: 899,
+  inStock: true
+};
+
+
+Render the product in a clean UI showing name, price, and status.
+
+###  Expected Output:
+
+```
+🖱 Wireless Mouse
+💲 Price: ₹899
+📦 Status: In Stock
+```
+
+###  Solution:
+
+
+function ProductCard({ product }) {
+  return (
+    <div style={{ border: "1px solid gray", padding: "10px", width: "200px" }}>
+      <h3>🖱 {product.name}</h3>
+      <p>💲 Price: ₹{product.price}</p>
+      <p>📦 Status: {product.inStock ? "In Stock" : "Out of Stock"}</p>
+    </div>
+  );
+}
+
+function App() {
+  const product = {
+    name: "Wireless Mouse",
+    price: 899,
+    inStock: true
+  };
+
+  return <ProductCard product={product} />;
+}
+
+
+-------------------------------------------------------
+
+##  Bonus: Assignment with Callback Function as Prop
+
+### 📋 Task:
+
+Create a `CounterButton` component with a prop `onIncrement` that triggers a function in the parent to increase a counter.
+
+###  Solution:
+
+
+function CounterButton({ onIncrement }) {
+  return <button onClick={onIncrement}>➕ Increase</button>;
+}
+
+function App() {
+  const [count, setCount] = React.useState(0);
+
+  return (
+    <div>
+      <h2>Count: {count}</h2>
+      <CounterButton onIncrement={() => setCount(count + 1)} />
+    </div>
+  );
+}
+
+-----------------------------------------------------------

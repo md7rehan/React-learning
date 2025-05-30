@@ -1,0 +1,133 @@
+*************Rules of Hooks******************
+
+1.Only call hooks at the top level
+2.Do not call hooks inside loops, conditons and nested fucntions
+3.Call hoooks in react functional components and not in any regular JS functions
+
+***************React useState Hook**************
+
+The useState hook is a function that allows you to add state to a functional component.
+
+**State** is an object that holds information that may change over the lifecycle of the component.
+React uses **state** to re-render a component when data changes.
+
+- State **controls the behavior and rendering** of components.
+- When state changes, React **re-renders** the component with the new state.
+- Helps build **dynamic and interactive** user interfaces.
+
+| Point                                      | Description                                                       |
+| ------------------------------------------ | ----------------------------------------------------------------- |
+| **Functional Component Only**              | `useState` is used only inside **functional components**          |
+| **Re-renders the UI**                      | When state changes, the component re-renders                      |
+| **Can be any type**                        | State can hold **string, number, boolean, object, array**         |
+| **Multiple `useState` calls**              | You can use **multiple state variables** in one component         |
+| **Initial value only used once**           | Initial value is used only the **first time** component renders   |
+| **Does not merge automatically (objects)** | If using an object, you need to **manually spread** the old state |
+
+const [user, setUser] = useState({ name: '', age: 0 });
+
+Update name only
+setUser(prev => ({ ...prev, name: 'Alice' }));
+
+const [state, setState] = useState(initialState)
+
+state: It is the value of the current state.
+setState: It is the function that is used to update the state.
+initialState: It is the initial value of the state.
+
+How Does useState() Work?
+The useState() hook allows you to add state to functional components in React. It works by:
+
+1. Initialize State: When you call useState(initialValue), it creates a state variable and an updater function.
+
+const [count, setCount] = useState(0);
+
+2. State is Preserved Across Renders: React remembers the state value between re-renders of the component. Each time the component renders, React keeps the latest value of count.
+
+3. State Updates with the Updater Function: When you call setCount(newValue) React updates the state and it re-renders the component to reflect the new state value.
+
+<button onClick={() => setCount(count + 1)}>Increment</button>
+
+4.  Triggers Re-render: React will re-render only the component where useState was used—ensuring your UI updates automatically when the state changes.
+
+Implementing the useState hook
+Here is the implementation of the useState hook:
+
+1. Counter using useState
+   A common example of using useState is managing the state of a counter with actions to increment and decrement the value.
+
+import { useState } from 'react';
+export default function Counter() {
+const [count, setCount] = useState(0);
+
+    function handleClick() {
+        setCount(count + 1);
+    }
+    return (
+        <button onClick={handleClick}>
+            Click {count} me
+        </button>
+    );
+
+}
+
+In this example
+
+useState(0): Initializes count with 0.
+setCount(count + 1): Updates the state by adding 1 to the current value.
+setCount(count - 1): Decreases the state by 1.
+
+2. Managing Form Input State
+   useState is also useful for handling form input fields dynamically.
+
+import React, { useState } from 'react';
+
+function Form() {
+
+const [name, setName] = useState('');
+const [age, setAge] = useState('');
+const [submitted, setSubmitted] = useState(false);
+
+    const handleSubmit = () => {
+        setSubmitted(true);
+    };
+
+    return (
+        <div>
+            <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your name"
+            />
+            <input
+                type="number"
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
+                placeholder="Enter your age"
+            />
+            <button onClick={handleSubmit}>Submit</button>
+
+            {submitted && <p>Form Submitted!</p>} //short circuit operator
+
+            {isSubmitted ?"yes":"no"} //ternary operator
+        </div>
+    );
+
+}
+
+export default Form;
+
+In this example
+
+useState(''): Initializes name and age with an empty string.
+onChange={(e): setName(e.target.value)}: Updates name state as the user types.
+onChange={(e): setAge(e.target.value)}: Updates age state as the user types.
+setSubmitted(true): Marks the form as submitted.
+
+When to Use useState
+We should use the useState Hook when:
+
+We need a simple state management solution.
+We component has state that changes over time.
+The state does not require complex updates or dependencies.

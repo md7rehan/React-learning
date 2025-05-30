@@ -1,0 +1,373 @@
+To group togather the related code and not repeat the code in life cycle method that is where we use useEffect
+and to handle side effects
+
+it is a close replacemet
+componentDidMount(
+setInterval()
+)
+componentDidUpdate(
+perform some state update that is setState
+)
+componentWillUnmount(
+clearInterval()
+)
+
+useEffect runs after every render
+
+## First, What Is a Side Effect in React?
+
+In React, a **side effect** is any operation that:
+
+1. **Affects things outside the component**, or
+2. **Cannot be done purely within rendering logic**
+
+> In short: **Anything that doesn’t directly compute and return JSX is a side effect.**
+
+## Why React Cares About Side Effects?
+
+React components are expected to be **pure functions** — just like in mathematics:
+
+- **Pure Function**: Always returns the same output for the same input.
+- **Side Effects**: Break this rule — they interact with the _outside world_.
+
+So, React uses **hooks like `useEffect`** to separate these side effects from the rendering phase.
+
+---
+
+### 1. **Updating the DOM manually** (e.g., using `document.getElementById()`)
+
+- React manages the DOM on its own.
+- When you manually manipulate the DOM, it’s **outside React’s control**.
+- So it’s considered a **side effect**, and it should go inside `useEffect()` to run after the DOM is rendered.
+
+  **Why?** DOM updates are not part of rendering output (JSX) — they interact with the real browser DOM.
+
+---
+
+### 2. **Fetching data from an API**
+
+Example:
+
+useEffect(() => {
+fetch("https://api.example.com/data")
+.then((res) => res.json())
+.then((data) => setData(data));
+}, []);
+
+- This fetch goes to an **external server**.
+- It is **asynchronous** and not part of the direct rendering output.
+
+  **Why?** External data fetching involves I/O, which is _not_ part of the component's rendering logic — hence a side effect.
+
+---
+
+### 3. **Subscribing to events** (like `window.addEventListener`)
+
+Example:
+
+useEffect(() => {
+const handleResize = () => console.log("Window resized");
+window.addEventListener("resize", handleResize);
+
+// Cleanup
+return () => {
+window.removeEventListener("resize", handleResize);
+};
+}, []);
+
+- This connects your component to **external events**.
+- React does not automatically clean up these listeners.
+
+  **Why?** You’re subscribing to global browser events — these are side effects because they live outside React’s rendering model.
+
+---
+
+### 4. **Setting Timers** (like `setTimeout`, `setInterval`)
+
+Example:
+
+useEffect(() => {
+const timer = setTimeout(() => {
+console.log("Timer finished");
+}, 2000);
+
+// Cleanup
+return () => clearTimeout(timer);
+}, []);
+
+- Timers run **outside the render cycle** and impact state or behavior later.
+- These can trigger re-renders or actions asynchronously.
+
+  **Why?** They operate outside the synchronous render flow and may change state or cause re-rendering later.
+
+---
+
+## Summary Table
+
+| Operation                            | Side Effect? | Why                                                           |
+| ------------------------------------ | ------------ | ------------------------------------------------------------- |
+| DOM Updates (`document.*`)           | Yes          | Bypasses React's virtual DOM                                  |
+| API Fetching (`fetch`, `axios`)      | Yes          | Makes network calls — external world interaction              |
+| Event Listeners (`addEventListener`) | Yes          | Subscribes to global/browser events                           |
+| Timers (`setTimeout`, `setInterval`) | Yes          | Asynchronous and affects state/render outside component logic |
+
+---
+
+## Where Should Side Effects Go in React?
+
+Use the **`useEffect`** hook:
+
+x
+useEffect(() => {
+// Place side effect code here
+
+}, []);
+
+---
+
+What is `useEffect`?
+
+`useEffect` is a **React Hook** that allows you to run **side effects** in function components.
+
+Side effects include:
+
+- Fetching data from an API
+- Manually changing the DOM
+- Setting up subscriptions or timers
+- Logging or analytics
+- Adding event listeners
+
+Syntax:
+
+useEffect(() => {
+// your side-effect logic here
+
+return () => {
+// optional cleanup
+};
+}, [dependencies]);
+
+React Lifecycle Comparison:
+
+In **Class Components**, side effects were handled in:
+
+| Lifecycle Method       | Equivalent in `useEffect`              |
+| ---------------------- | -------------------------------------- |
+| `componentDidMount`    | `useEffect(() => {}, [])`              |
+| `componentDidUpdate`   | `useEffect(() => {}, [dependency])`    |
+| `componentWillUnmount` | `return () => {}` (inside `useEffect`) |
+
+Basic Example – Component Did Mount
+
+import { useEffect } from "react";
+
+function App() {
+useEffect(() => {
+console.log("Component Mounted");
+
+    // cleanup (optional)
+    return () => {
+      console.log("Component Unmounted");
+    };
+
+}, []);
+
+return <h1>Hello useEffect</h1>;
+}
+
+> The `[]` dependency array ensures it runs **once**, like `componentDidMount`.
+
+---
+
+Real-world Example – API Fetch
+
+import { useState, useEffect } from "react";
+
+function UsersList() {
+const [users, setUsers] = useState([]);
+
+useEffect(() => {
+// Fetch users
+fetch("https://jsonplaceholder.typicode.com/users")
+.then((res) => res.json())
+.then((data) => setUsers(data));
+}, []); // empty array means run once on mount
+
+return (
+
+<div>
+<h3>User List</h3>
+{users.map((user) => (
+<p key={user.id}>👤 {user.name}</p>
+))}
+</div>
+);
+}
+
+---
+
+Example – Runs on Dependency Change
+
+function Counter() {
+const [count, setCount] = useState(0);
+
+useEffect(() => {
+console.log("Count updated:", count);
+}, [count]);
+
+return (
+
+<div>
+<button onClick={() => setCount(count + 1)}>Increment</button>
+<p>Count: {count}</p>
+</div>
+);
+}
+
+> It re-runs every time the value of `count` changes.
+
+---
+
+Common Mistake – Missing Dependency
+
+useEffect(() => {
+// using props or state here
+}, []); // doesn't re-run when those props/state change
+
+> **Fix:** Always include all **used variables** inside the dependency array to avoid stale data.
+
+---
+
+Cleanup in `useEffect` (like `componentWillUnmount`)
+
+### Example: Set Interval with Cleanup
+
+import { useState, useEffect } from "react";
+
+function Timer() {
+const [seconds, setSeconds] = useState(0);
+
+useEffect(() => {
+const timer = setInterval(() => {
+setSeconds((s) => s + 1);
+}, 1000);
+
+    return () => {
+      clearInterval(timer); // cleanup
+    };
+
+}, []);
+
+return <p>⏱ Timer: {seconds} sec</p>;
+}
+
+```
+
+---
+
+##  Types of `useEffect` Usage
+
+| Scenario                      | Example Dependency     | Purpose                        |
+|-------------------------------|------------------------|--------------------------------|
+| Run once on mount             | `[]`                   | Initial API calls, setup       |
+| Run on state/prop change      | `[count]`              | React to user interaction      |
+| Run on multiple deps change   | `[id, name]`           | Conditional effects            |
+| Cleanup side effects          | `return () => {}`      | Timers, event listeners        |
+
+---
+
+##  useEffect Execution Order
+
+- Runs **after rendering**
+- Doesn't block painting the screen
+- Multiple `useEffect`s run **in order of declaration**
+
+---
+
+##  Best Practices
+
+1. Keep logic clean and separate
+2. Always include necessary dependencies
+3. Use multiple `useEffect` calls for different concerns
+4. Use `return` for cleanup when needed
+5. Don't mutate state inside the dependency array
+
+
+
+
+| Topic             | Quick Explanation |
+|-------------------|-------------------|
+| What is useEffect? | Runs side effects in function components |
+| When to use?       | On mount, on update, or before unmount |
+| Syntax             | `useEffect(() => { ... }, [deps])` |
+| Cleanup            | Return a function inside useEffect |
+| Lifecycle match    | Works like `componentDidMount`, `DidUpdate`, and `WillUnmount` |
+
+```
+
+<!-- -------------useEffect with Dependency array--------------------------- -->
+
+The `useEffect` hook in React is used to **perform side effects** in your components—such as fetching data, updating the DOM, setting timers, or interacting with browser APIs.
+
+### Basic Syntax
+
+useEffect(() => {
+// your side effect code here
+}, [dependencies]);
+
+- The **function inside `useEffect`** runs after the component renders.
+- The **dependency array** determines **when** the effect should re-run.
+
+---
+
+## Types of `useEffect` Based on Dependency Array
+
+---
+
+### 1. **Run on Every Render** (No Dependency Array)
+
+useEffect(() => {
+console.log("Runs after every render");
+});
+
+Not recommended unless needed—this runs **after every render** (can cause performance issues).
+
+---
+
+### 2. **Run Only Once (on Mount)** `([])`
+
+useEffect(() => {
+console.log("Runs once when component mounts");
+}, []);
+
+This is useful for initial data fetching or setting up subscriptions.
+
+**Example:**
+
+useEffect(() => {
+fetch("https://dummyjson.com/products")
+.then(res => res.json())
+.then(data => console.log(data));
+}, []);
+
+---
+
+### 3. **Run When Specific State/Props Change** `([dependency])`
+
+useEffect(() => {
+console.log("Runs when count changes");
+}, [count]);
+
+**Example:**
+
+const [count, setCount] = useState(0);
+
+useEffect(() => {
+console.log(`Count is now: ${count}`);
+}, [count]);
+
+return (
+<button onClick={() => setCount(count + 1)}>
+Increase Count
+</button>
+);
