@@ -1,0 +1,198 @@
+What is useMemo in React?
+
+Definition:
+
+useMemo is a React Hook that helps you optimize performance by memoizing (caching) the result of a computation so that it doesn’t get recalculated on every render unless necessary.
+
+syntax:
+const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);
+
+Why do we need useMemo?
+React re-renders components when state or props change.
+On each render:
+All variables and functions are recreated from scratch.
+This can become expensive if you’re doing heavy calculations or large data filtering, especially inside the render method.
+useMemo solves this by remembering the previous result if the inputs (dependencies) haven't changed.
+
+const memoizedResult = useMemo(() => {
+// some expensive calculation
+return result;
+}, [dependency1, dependency2]);
+
+| Part             | Meaning                                                  |
+| ---------------- | -------------------------------------------------------- |
+| `() => {}`       | A function that returns the **computed value**           |
+| `[dependencies]` | If none of these change, React **returns cached result** |
+
+Real-life Example
+
+Without useMemo (expensive calculation runs every render)
+
+const expensiveCalculation = (num) => {
+console.log("Calculating...");
+for (let i = 0; i < 100000000; i++) {} // Dummy heavy loop
+return num \* 2;
+};
+
+function Demo() {
+const [count, setCount] = useState(0);
+const result = expensiveCalculation(count); // runs every render
+
+return (
+
+<div>
+<h2>Result: {result}</h2>
+<button onClick={() => setCount(count + 1)}>Increment</button>
+</div>
+);
+}
+
+With useMemo (only runs when count changes)
+
+import React, { useMemo, useState } from "react";
+
+function Demo() {
+const [count, setCount] = useState(0);
+const [other, setOther] = useState(0);
+
+const result = useMemo(() => {
+console.log("Calculating...");
+for (let i = 0; i < 100000000; i++) {} // expensive work
+return count \* 2;
+}, [count]); // only recalculates if `count` changes
+
+return (
+
+<div>
+<h2>Result: {result}</h2>
+<button onClick={() => setCount(count + 1)}>Increment Count</button>
+<button onClick={() => setOther(other + 1)}>Update Other State</button>
+</div>
+);
+}
+
+The expensive function will NOT run when "other" state updates.
+
+Where should you use useMemo?
+You can use useMemo when:
+You’re doing heavy computations inside the component.
+You're using derived state (e.g., filtering, sorting large arrays).
+You want to prevent unnecessary recalculations on every render.
+
+When not to use useMemo
+Don’t memoize everything. Only memoize heavy or frequently used values.
+Memoization uses memory, so overusing it can make performance worse.
+If the calculation is light or quick, it’s better to let it run normally.
+
+useMemo vs useCallback
+
+| Hook          | Purpose                                          |
+| ------------- | ------------------------------------------------ |
+| `useMemo`     | Memoizes the **returned value** of a function    |
+| `useCallback` | Memoizes the **function itself**, not its result |
+
+const memoizedValue = useMemo(() => compute(a), [a]); // stores result
+const memoizedFn = useCallback(() => doSomething(a), [a]); // stores function
+
+| Feature                   | useMemo Hook                 |
+| ------------------------- | ---------------------------- |
+| Caches a value            |  Yes                       |
+| Optimizes performance     |  Yes                       |
+| Accepts dependencies      |  Yes                       |
+| Use for heavy computation |  Absolutely                |
+| Always needed?            |  No — only when beneficial |
+
+**\*\***\***\*\***Real-Time example\***\*\*\*\*\*\***
+
+Without useMemo hook
+
+import React, { useState } from "react";
+
+const products = [
+{ id: 1, name: "Mobile" },
+{ id: 1, name: "Car" },
+{ id: 1, name: "Cooler" },
+{ id: 1, name: "Bike" },
+{ id: 1, name: "Icecream" },
+{ id: 1, name: "Laptop" },
+];
+
+function FilterProducts() {
+const [search, setSearch] = useState("");
+
+const filteredProducts = products.filter((item) => {
+return item.name.toLowerCase().includes(search.toLowerCase());
+});
+
+return (
+
+<div>
+<input
+className="border p-2 mb-4"
+type="text"
+placeholder="enter product"
+onChange={(e) => {
+setSearch(e.target.value);
+}}
+/>
+<ul>
+{filteredProducts.map((product) => (
+<li key={product.id}>{product.name}</li>
+))}
+</ul>
+</div>
+);
+}
+
+export default FilterProducts;
+
+<!-- Issues You Might Face Without useMemo -->
+
+Every time the component re-renders (like when search changes), line runs again and filters the array.
+
+That works fine for small lists. But here's what happens as things scale.
+
+Issues You Might Face Without useMemo
+
+1. Performance hit on large datasets
+   If you have thousands of products , filtering them every render can become slow .
+
+Each render:
+
+Re-runs the .filter() function.
+Re-creates a new array.
+Does redundant work if search hasn’t changed (unlikely in this case, but still). 2. Unnecessary computations on every render
+Even though the search value didn’t change, React will still run .filter() again — which is unnecessary.
+
+3. Worse performance in complex apps
+   If this component is part of a larger app with many state updates or frequent re-renders, filtering logic like this can add up.
+
+<!-- *****************Benefits of Using useMemo***************** -->
+
+import React, { useState, useMemo } from "react";
+
+const filteredProducts = useMemo(() => {
+return products.filter((item) =>
+item.name.toLowerCase().includes(search.toLowerCase())
+);
+}, [search]);
+
+Benefits of Using useMemo
+
+1. Avoids unnecessary recalculations
+   useMemo will only re-run the filter when search changes .
+   If search stays the same, it returns the cached (memoized) result .
+2. Improves performance on large lists
+   With useMemo, filtering is done only when needed.
+   Especially useful if the list is huge or the filtering logic is complex.
+3. Helps optimize child components
+   If you pass filteredProducts to child components using React.memo, useMemo ensures they only re-render when necessary.
+
+Best Practice
+Use useMemo when:
+
+The computation is expensive (e.g., large arrays, heavy math).
+You want to avoid unnecessary recomputation .
+You're passing values to React.memo optimized children.
+
+even though the list is small, using useMemo is a good habit for future scalability and clean performance practices.

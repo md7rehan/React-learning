@@ -1,0 +1,99 @@
+What is useCallback?
+useCallback is a React Hook that memoizes a function, so the function reference remains the same between renders — unless its dependencies change.
+
+Syntax:
+
+const memoizedCallback = useCallback(() => {
+// function code
+}, [dependencies]);
+
+Why do we need useCallback?
+
+In React, when a component re-renders:
+All functions inside it get re-created.
+If those functions are passed as props to child components, the children will re-render (even if the logic or values didn’t change).
+
+useCallback solves this by caching the function between renders — preventing unnecessary re-renders of child components (especially when used with React.memo).
+
+Key Concepts:
+| Concept | Explanation |
+| --------------------- | ----------------------------------------------------------------------------- |
+| **Memoized Function** | `useCallback` returns a **cached version** of a function |
+| **Dependencies** | The function only re-creates when something in the `[deps]` array changes |
+| **Optimization** | Best used with **React.memo** components or inside performance-critical logic |
+
+Difference: useCallback vs useMemo
+
+| Hook                    | Purpose                                      |
+| ----------------------- | -------------------------------------------- |
+| `useCallback(fn, deps)` | Returns a **memoized version of a function** |
+| `useMemo(fn, deps)`     | Returns a **memoized value**                 |
+
+const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);
+const memoizedFunction = useCallback(() => doSomething(a, b), [a, b]);
+
+When to Use useCallback
+
+Use it:
+When passing functions as props to React.memo children
+When a function is defined inside a component but doesn’t need to change every render
+When dealing with event handlers inside reusable components
+
+Avoid if:
+Your function is very simple or the component doesn’t render often
+You're not optimizing render performance
+Overusing it may add complexity without noticeable benefit
+
+| Feature      | Description                                        |
+| ------------ | -------------------------------------------------- |
+| What         | Memoizes a function                                |
+| Returns      | Same function instance unless dependencies change  |
+| Dependencies | `[]` means memoize once                            |
+| Common Pair  | Often used with `React.memo`                       |
+| Performance  | Prevents re-renders due to new function references |
+
+
+***********Parent Component***************
+
+import React, { useCallback, useState } from "react";
+import Child from "./Child";
+
+function Parent() {
+  const [input, setInput] = useState("");
+  const [count, setCount] = useState(0);
+
+  const increment = useCallback(() => {
+    setCount((prev) => prev + 1);
+  }, [count]);
+
+  return (
+    <div>
+      <input
+        className="border-1"
+        type="text"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+      />
+      <h1>Count:{count}</h1>
+      <Child fun={increment} />
+    </div>
+  );
+}
+
+export default Parent;
+
+***********Child Component***************
+import React from "react";
+
+function Child({ fun }) {
+  console.log("child renderd");
+
+  return (
+    <div>
+      <button onClick={fun}>Click</button>
+    </div>
+  );
+}
+
+export default React.memo(Child);
+

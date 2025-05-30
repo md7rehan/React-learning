@@ -1,0 +1,78 @@
+What is React.memo?
+React.memo is a Higher Order Component (HOC) in React that memoizes functional components.
+It prevents unnecessary re-renders by reusing the last rendered result if the component’s props haven’t changed.
+
+Syntax:
+const MemoizedComponent = React.memo(Component);
+
+Or directly in the export:
+export default React.memo(MyComponent);
+
+Why Use React.memo?
+By default, when a parent component re-renders, all of its children also re-render, even if the props passed to them haven't changed.
+
+React.memo helps by skipping rendering for functional components if their props are the same as last render.
+
+How It Works:
+Internally, React.memo uses shallow comparison (like ===) to compare the current and previous props.
+
+If all props are shallowly equal, React skips the render of that component.
+
+Without React.memo:
+
+function Parent() {
+  const [count, setCount] = useState(0);
+  return (
+    <div>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+      <Child name="John" />
+    </div>
+  );
+}
+
+function Child({ name }) {
+  console.log("Child rendered");
+  return <h2>Hello {name}</h2>;
+}
+
+With React.memo:
+
+const Child = React.memo(({ name }) => {
+  console.log("Child rendered");
+  return <h2>Hello {name}</h2>;
+});
+
+Now, Child won’t re-render unless name prop changes.
+
+Important Points
+
+What it does:
+Prevents re-rendering when props are shallowly equal.
+Works only on functional components.
+
+What it doesn’t do:
+It does not prevent state updates inside the memoized component.
+It does not memoize internal values like state or calculations – for that, use useMemo.
+
+When Should You Use React.memo?
+
+Use when:
+You have a pure component (output only depends on props).
+The component is heavy to render.
+The component receives the same props often.
+You want to optimize rendering in large lists or deeply nested trees.
+
+
+Avoid if:
+The component is very small or simple.
+The performance benefit is negligible.
+Props are almost always changing.
+
+
+| Concept           | Description                                    |
+| ----------------- | ---------------------------------------------- |
+| `React.memo`      | Memoizes functional components                 |
+| Comparison method | Shallow comparison by default                  |
+| Purpose           | Prevents unnecessary re-renders for same props |
+| Usage             | Performance optimization tool                  |
+| Custom compare    | Optional function for fine-tuned comparison    |
