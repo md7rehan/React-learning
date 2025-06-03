@@ -1,0 +1,211 @@
+What is useReducer?
+useReducer is a React Hook used to manage complex state logic in functional components.
+
+It's similar to useState, but better when:
+
+The state depends on previous values
+You have multiple related state variables
+State changes are triggered by many actions
+
+Syntax
+const [state, dispatch] = useReducer(reducerFunction, initialState);
+
+reducerFunction: A function that takes the current state and an action, and returns the new state.
+initialState: The default state value.
+state: Current state value.
+dispatch: A function used to send actions to update the state.
+
+What is a Reducer Function?
+A pure function that takes two arguments:
+
+const reducer = (state, action) => {
+switch (action.type) {
+case "ACTION_TYPE":
+return newState;
+default:
+return state;
+}
+};
+
+Example 1: Simple Counter
+
+import React, { useReducer } from "react";
+
+const reducer = (state, action) => {
+switch (action.type) {
+case "INCREMENT":
+return state + 1;
+case "DECREMENT":
+return state - 1;
+case "RESET":
+return 0;
+default:
+return state;
+}
+};
+
+const Counter = () => {
+const [count, dispatch] = useReducer(reducer, 0);
+
+return (
+
+<div>
+<h1>Count: {count}</h1>
+<button onClick={() => dispatch({ type: "INCREMENT" })}>➕</button>
+<button onClick={() => dispatch({ type: "DECREMENT" })}>➖</button>
+<button onClick={() => dispatch({ type: "RESET" })}>🔄</button>
+</div>
+);
+};
+
+export default Counter;
+
+******\*\*******For Practice****\*\*\*\*****
+Example 2: Form Management with useReducer
+
+const formReducer = (state, action) => {
+return {
+...state,
+[action.name]: action.value
+};
+};
+
+const initialForm = { name: "", email: "" };
+
+const Form = () => {
+const [formState, dispatch] = useReducer(formReducer, initialForm);
+
+const handleChange = (e) => {
+dispatch({ name: e.target.name, value: e.target.value });
+};
+
+return (
+<>
+<input name="name" value={formState.name} onChange={handleChange} />
+<input name="email" value={formState.email} onChange={handleChange} />
+
+<pre>{JSON.stringify(formState, null, 2)}</pre>
+
+</>
+);
+};
+
+Advantages of useReducer
+
+Cleaner logic for multi-step or complex state transitions
+Easier to maintain and extend as app grows
+Similar to Redux, so it prepares you for state management libraries
+
+**\*\***\*\***\*\***-----------------**\*\*\*\***\*\***\*\*\*\***\*\*\*\***\*\*\*\***\*\***\*\*\*\***
+React useReducer Hook
+
+The useReducer Hook is similar to the useState Hook.
+
+It allows for custom state logic.
+
+If you find yourself keeping track of multiple pieces of state that rely on complex logic, useReducer may be useful.
+
+Syntax
+The useReducer Hook accepts two arguments.
+
+useReducer(<reducer>, <initialState>)
+
+The reducer function contains your custom state logic and the initialState can be a simple value but generally will contain an object.
+
+The useReducer Hook returns the current state and a dispatch method.
+
+The useReducer hook in React is a state management hook that’s especially useful when:
+
+You have complex state logic (like multiple related values)
+
+You want centralized control over how state updates
+
+Your state updates depend on the previous state
+
+It’s conceptually similar to Redux, but built into React.
+
+Syntax
+
+const [state, dispatch] = useReducer(reducerFunction, initialState);
+
+state: The current state.
+dispatch: A function to send actions to the reducer.
+reducerFunction: A function that handles state updates based on the action.
+initialState: The starting state value.
+
+Reducer Function
+A reducer is a pure function that takes the current state and an action, then returns the new state.
+
+const reducer = (state, action) => {
+switch (action.type) {
+case "INCREMENT":
+return { count: state.count + 1 };
+case "DECREMENT":
+return { count: state.count - 1 };
+case "RESET":
+return { count: 0 };
+default:
+return state;
+}
+};
+
+\***\*\*\*\*\*\*\***\*\***\*\*\*\*\*\*\***---\***\*\*\*\*\*\*\***\*\***\*\*\*\*\*\*\***
+
+Simple Counter
+
+import React, { useReducer } from "react";
+
+const initialState = { count: 0 };
+
+const reducer = (state, action) => {
+switch (action.type) {
+case "INCREMENT":
+return { count: state.count + 1 };
+case "DECREMENT":
+return { count: state.count - 1 };
+case "RESET":
+return { count: 0 };
+default:
+return state;
+}
+};
+
+function Counter() {
+const [state, dispatch] = useReducer(reducer, initialState);
+
+return (
+
+<div className="p-4">
+<h1 className="text-2xl">Count: {state.count}</h1>
+<button onClick={() => dispatch({ type: "INCREMENT" })} className="mr-2">+</button>
+<button onClick={() => dispatch({ type: "DECREMENT" })} className="mr-2">-</button>
+<button onClick={() => dispatch({ type: "RESET" })}>Reset</button>
+</div>
+);
+}
+
+export default Counter;
+
+Why Use useReducer?
+
+| Situation                                                     | Use `useState` | Use `useReducer` |
+| ------------------------------------------------------------- | -------------- | ---------------- |
+| Simple state (1-2 variables)                                  | ✅             | 🚫               |
+| Complex state logic or multiple sub-values                    | 🚫             | ✅               |
+| Future scalability or predictable state updates               | 🚫             | ✅               |
+| Need to **share update logic** or handle **multiple actions** | 🚫             | ✅               |
+
+Comparison with Redux
+
+| Feature                         | `useReducer`            | Redux         |
+| ------------------------------- | ----------------------- | ------------- |
+| Built into React                | ✅                      | ❌ (external) |
+| Suited for small to medium apps | ✅                      | ✅            |
+| DevTools support                | ❌                      | ✅            |
+| Middleware support              | ❌                      | ✅            |
+| Global state management         | 🚫 (needs `useContext`) | ✅            |
+
+useReducer is great for managing complex state logic in React.
+It follows the action-based pattern (like Redux).
+Works well with useContext for scoped global state.
+Keeps state updates predictable and maintainable.
